@@ -1,6 +1,8 @@
 package org.galapagos.persistence;
 
 import lombok.extern.log4j.Log4j;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
 import org.galapagos.config.RootConfig;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,9 +23,24 @@ public class DataSourceTest {
     @Autowired
     private DataSource dataSource;
 
+    @Autowired
+    private SqlSessionFactory sqlSessionFactory;
+
     @Test
     public void testConnection() {
         try (Connection con = dataSource.getConnection()) {
+            log.info(con);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void testMyBatis() {
+        try (SqlSession session = sqlSessionFactory.openSession();
+             Connection con = session.getConnection();
+        ) {
+            log.info(session);
             log.info(con);
         } catch (Exception e) {
             fail(e.getMessage());
